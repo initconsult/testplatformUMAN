@@ -13,7 +13,6 @@ class ClientTest(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
-    # Relationships
     client = relationship("Client", back_populates="client_tests")
     test = relationship("Test", back_populates="client_tests")
-    client_test_results = relationship("ClientTestResult", back_populates="client_test")
+    client_test_results = relationship("ClientTestResult", back_populates="client_test", cascade="all, delete-orphan")

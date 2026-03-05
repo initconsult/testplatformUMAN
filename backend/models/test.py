@@ -25,6 +25,5 @@ class Test(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
-    # Relationships
     client_tests = relationship("ClientTest", back_populates="test")
     test_question_lists = relationship("TestQuestionList", back_populates="test")

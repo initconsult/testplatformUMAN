@@ -35,6 +35,5 @@ class Client(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
-    # Relationships
     advisor = relationship("Advisor", back_populates="clients")
     client_tests = relationship("ClientTest", back_populates="client")

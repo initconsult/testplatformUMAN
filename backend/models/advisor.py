@@ -11,5 +11,4 @@ class Advisor(Base):
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
 
-    # Relationships
     clients = relationship("Client", back_populates="advisor")
