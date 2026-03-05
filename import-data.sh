@@ -38,17 +38,39 @@ echo "✓ Timestamp kolommen verwerkt!"
 
 echo ""
 echo "Stap 3: Data importeren uit uman-3.sql..."
-docker exec -i uman_db mysql -uhomestead -psecret uman < uman-3.sql
+docker exec -i uman_db mysql -uhomestead -psecret uman < uman-3.sql 2>&1 | tee import-errors.log
 
-if [ $? -eq 0 ]; then
+if [ ${PIPESTATUS[0]} -eq 0 ]; then
     echo ""
     echo "✓ Data succesvol geïmporteerd!"
     echo ""
-    echo "Import voltooid! Uw database is nu volledig gevuld met data."
+    
+    # Controleer hoeveel records er in elke tabel zitten
+    echo "Database statistieken:"
+    echo "====================="
+    docker exec uman_db mysql -uhomestead -psecret uman -e "
+        SELECT 'advisors' as tabel, COUNT(*) as aantal FROM advisors
+        UNION ALL
+        SELECT 'clients' as tabel, COUNT(*) as aantal FROM clients
+        UNION ALL
+        SELECT 'tests' as tabel, COUNT(*) as aantal FROM tests
+        UNION ALL
+        SELECT 'client_tests' as tabel, COUNT(*) as aantal FROM client_tests
+        UNION ALL
+        SELECT 'categories' as tabel, COUNT(*) as aantal FROM categories
+        UNION ALL
+        SELECT 'questions' as tabel, COUNT(*) as aantal FROM questions
+        UNION ALL
+        SELECT 'question_lists' as tabel, COUNT(*) as aantal FROM question_lists;
+    "
+    echo ""
+    echo "Import voltooid! Uw database is nu gevuld met data."
+    echo ""
+    echo "Als een tabel 0 records heeft, controleer dan of uman-3.sql INSERT statements bevat voor die tabel."
 else
     echo ""
     echo "✗ Fout bij importeren van data"
     echo ""
-    echo "Controleer de foutmelding hierboven voor meer details."
+    echo "Controleer import-errors.log voor details."
     exit 1
 fi
