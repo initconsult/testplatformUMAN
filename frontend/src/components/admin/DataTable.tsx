@@ -46,7 +46,6 @@ export default function DataTable({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      {/* Zoekbalk */}
       {searchKeys.length > 0 && (
         <div className="p-4 border-b border-gray-100">
           <div className="relative">
@@ -67,7 +66,6 @@ export default function DataTable({
         </div>
       )}
 
-      {/* Tabel */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -115,15 +113,9 @@ export default function DataTable({
               </tr>
             ) : (
               paginated.map((row, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-50 transition-colors"
-                >
+                <tr key={i} className="hover:bg-gray-50 transition-colors">
                   {columns.map((col) => (
-                    <td
-                      key={col.key}
-                      className="px-6 py-4 text-sm text-gray-700"
-                    >
+                    <td key={col.key} className="px-6 py-4 text-sm text-gray-700">
                       {col.render
                         ? col.render(row[col.key], row)
                         : row[col.key] ?? "-"}
@@ -156,7 +148,6 @@ export default function DataTable({
         </table>
       </div>
 
-      {/* Paginering */}
       {totalPages > 1 && (
         <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
           <p className="text-sm text-gray-500">
@@ -178,14 +169,11 @@ export default function DataTable({
                   Math.abs(p - currentPage) <= 1
               )
               .map((p, i, arr) => (
-                <>
+                <span key={p}>
                   {i > 0 && arr[i - 1] !== p - 1 && (
-                    <span key={`dots-${p}`} className="px-2 py-1 text-gray-400">
-                      ...
-                    </span>
+                    <span className="px-2 py-1 text-gray-400">...</span>
                   )}
                   <button
-                    key={p}
                     onClick={() => setCurrentPage(p)}
                     className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                       currentPage === p
@@ -195,7 +183,7 @@ export default function DataTable({
                   >
                     {p}
                   </button>
-                </>
+                </span>
               ))}
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
