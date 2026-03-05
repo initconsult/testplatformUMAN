@@ -45,37 +45,4 @@ CREATE TABLE IF NOT EXISTS `PCAMY` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Permission_role tabel - timestamps toevoegen
--- Controleer eerst of kolommen al bestaan via een stored procedure
-DELIMITER $$
-
-CREATE PROCEDURE AddTimestampsToPermissionRole()
-BEGIN
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '42S21' BEGIN END;
-    
-    ALTER TABLE `permission_role` ADD COLUMN `created_at` timestamp NULL DEFAULT NULL;
-    ALTER TABLE `permission_role` ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-END$$
-
-DELIMITER ;
-
-CALL AddTimestampsToPermissionRole();
-DROP PROCEDURE AddTimestampsToPermissionRole;
-
--- Role_user tabel - timestamps toevoegen
-DELIMITER $$
-
-CREATE PROCEDURE AddTimestampsToRoleUser()
-BEGIN
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '42S21' BEGIN END;
-    
-    ALTER TABLE `role_user` ADD COLUMN `created_at` timestamp NULL DEFAULT NULL;
-    ALTER TABLE `role_user` ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-END$$
-
-DELIMITER ;
-
-CALL AddTimestampsToRoleUser();
-DROP PROCEDURE AddTimestampsToRoleUser;
-
-SELECT 'Tabellen aangemaakt en timestamps toegevoegd!' as Status;
+SELECT 'Tabellen aangemaakt!' as Status;
