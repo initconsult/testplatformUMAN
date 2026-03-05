@@ -1,62 +1,58 @@
--- Migratie script om created_at en updated_at kolommen toe te voegen
--- aan tabellen die deze nog niet hebben
+-- Migratie script om ontbrekende tabellen aan te maken en
+-- created_at en updated_at kolommen toe te voegen
 
--- Advisors tabel heeft al created_at en updated_at
+-- PCAFA tabel aanmaken indien niet bestaat
+CREATE TABLE IF NOT EXISTS `PCAFA` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `score` int NOT NULL,
+  `scorereport` int NOT NULL,
+  `category_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Categories tabel heeft al created_at en updated_at
+-- PCAFY tabel aanmaken indien niet bestaat
+CREATE TABLE IF NOT EXISTS `PCAFY` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `score` int NOT NULL,
+  `scorereport` int NOT NULL,
+  `category_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Clients tabel heeft al created_at en updated_at
+-- PCAMA tabel aanmaken indien niet bestaat
+CREATE TABLE IF NOT EXISTS `PCAMA` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `score` int NOT NULL,
+  `scorereport` int NOT NULL,
+  `category_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Client_tests tabel heeft al created_at en updated_at
+-- PCAMY tabel aanmaken indien niet bestaat
+CREATE TABLE IF NOT EXISTS `PCAMY` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `score` int NOT NULL,
+  `scorereport` int NOT NULL,
+  `category_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Client_test_results tabel heeft al created_at en updated_at
-
--- Migrations tabel heeft geen timestamps nodig
-
--- Password_resets tabel heeft al created_at
-
--- PCAFA tabel - timestamps toevoegen
-ALTER TABLE `PCAFA` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-
--- PCAFY tabel - timestamps toevoegen
-ALTER TABLE `PCAFY` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-
--- PCAMA tabel - timestamps toevoegen
-ALTER TABLE `PCAMA` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-
--- PCAMY tabel - timestamps toevoegen
-ALTER TABLE `PCAMY` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
-
--- Permissions tabel heeft al created_at en updated_at
-
--- Permission_role tabel - timestamps toevoegen
+-- Permission_role tabel - timestamps toevoegen indien kolommen nog niet bestaan
 ALTER TABLE `permission_role` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
+ADD COLUMN IF NOT EXISTS `created_at` timestamp NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `updated_at` timestamp NULL DEFAULT NULL;
 
--- Questions tabel heeft al created_at en updated_at
-
--- Question_lists tabel heeft al created_at en updated_at
-
--- Roles tabel heeft al created_at en updated_at
-
--- Role_user tabel - timestamps toevoegen
+-- Role_user tabel - timestamps toevoegen indien kolommen nog niet bestaan
 ALTER TABLE `role_user` 
-ADD COLUMN `created_at` timestamp NULL DEFAULT NULL,
-ADD COLUMN `updated_at` timestamp NULL DEFAULT NULL;
+ADD COLUMN IF NOT EXISTS `created_at` timestamp NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `updated_at` timestamp NULL DEFAULT NULL;
 
--- Tests tabel heeft al created_at en updated_at
-
--- Test_question_lists tabel heeft al created_at en updated_at
-
--- Users tabel heeft al created_at en updated_at
-
-SELECT 'Timestamps succesvol toegevoegd aan alle tabellen!' as Status;
+SELECT 'Tabellen aangemaakt en timestamps toegevoegd!' as Status;

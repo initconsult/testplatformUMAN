@@ -15,13 +15,13 @@ done
 echo "Database is beschikbaar!"
 echo ""
 
-echo "Stap 1: Ontbrekende kolommen toevoegen..."
+echo "Stap 1: Ontbrekende tabellen aanmaken en kolommen toevoegen..."
 docker exec -i uman_db mysql -uhomestead -psecret uman < add-timestamps.sql
 
 if [ $? -eq 0 ]; then
-    echo "✓ Kolommen succesvol toegevoegd!"
+    echo "✓ Tabellen en kolommen succesvol toegevoegd!"
 else
-    echo "✗ Fout bij toevoegen van kolommen"
+    echo "✗ Fout bij toevoegen van tabellen/kolommen"
     exit 1
 fi
 
@@ -38,6 +38,6 @@ else
     echo ""
     echo "✗ Fout bij importeren van data"
     echo ""
-    echo "Tip: Controleer of uman-3.sql INSERT statements bevat die overeenkomen met de tabelstructuur"
+    echo "Controleer de foutmelding hierboven voor meer details."
     exit 1
 fi
