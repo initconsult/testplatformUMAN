@@ -16,7 +16,7 @@ echo "Database is beschikbaar!"
 echo ""
 
 echo "Stap 1: Ontbrekende kolommen toevoegen..."
-docker exec -i uman_db mysql -uhomestead -psecret < add-timestamps.sql
+docker exec -i uman_db mysql -uhomestead -psecret uman < add-timestamps.sql
 
 if [ $? -eq 0 ]; then
     echo "✓ Kolommen succesvol toegevoegd!"

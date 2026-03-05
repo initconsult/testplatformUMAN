@@ -1,8 +1,6 @@
 -- Migratie script om created_at en updated_at kolommen toe te voegen
 -- aan tabellen die deze nog niet hebben
 
-USE uman;
-
 -- Advisors tabel heeft al created_at en updated_at
 
 -- Categories tabel heeft al created_at en updated_at
