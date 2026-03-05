@@ -1,0 +1,2 @@
+cd /pad/naar/project
+php artisan serve
