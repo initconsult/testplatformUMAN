@@ -149,6 +149,50 @@ export default function ClientTestsPage() {
         </span>
       ),
     },
+    {
+      key: "safeurl",
+      label: "Rapporten",
+      render: (val: string, row: ClientTest) => {
+        if (!row.complete) return <span className="text-gray-400">-</span>;
+        
+        return (
+          <div className="flex space-x-1">
+            <a
+              href={`${apiUrl}/api/reports/nl/${val}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
+            >
+              NL
+            </a>
+            <a
+              href={`${apiUrl}/api/reports/fr/${val}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
+            >
+              FR
+            </a>
+            <a
+              href={`${apiUrl}/api/reports/en/${val}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
+            >
+              EN
+            </a>
+            <a
+              href={`${apiUrl}/api/reports/pca/nl/${val}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-purple-600 hover:text-purple-800 text-xs bg-purple-50 px-2 py-1 rounded"
+            >
+              PCA
+            </a>
+          </div>
+        );
+      },
+    },
   ];
 
   return (

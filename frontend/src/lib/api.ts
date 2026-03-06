@@ -7,4 +7,14 @@ const api = axios.create({
   },
 });
 
+// Report API functions
+export const reportApi = {
+  getNL: (safeurl: string) => api.get(`/api/reports/nl/${safeurl}`),
+  getFR: (safeurl: string) => api.get(`/api/reports/fr/${safeurl}`),
+  getEN: (safeurl: string) => api.get(`/api/reports/en/${safeurl}`),
+  getPCANL: (safeurl: string) => api.get(`/api/reports/pca/nl/${safeurl}`),
+  getPCAFR: (safeurl: string) => api.get(`/api/reports/pca/fr/${safeurl}`),
+  getPCAEN: (safeurl: string) => api.get(`/api/reports/pca/en/${safeurl}`),
+};
+
 export default api;
