@@ -13,6 +13,7 @@ const menuItems = [
   { title: "Vragen", href: "/admin/questions", icon: "❓" },
   { title: "Categorieën", href: "/admin/categories", icon: "🏷️" },
   { title: "Klanttests", href: "/admin/client-tests", icon: "📊" },
+  { title: "PCA Tabellen", href: "/admin/pca-tables", icon: "📈" },
 ];
 
 export default function AdminLayout({
