@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 from enum import Enum
 
@@ -18,7 +18,7 @@ class ClientBase(BaseModel):
     address: Optional[str] = None
     zip: Optional[str] = None
     city: Optional[str] = None
-    emailaddress: Optional[EmailStr] = None
+    emailaddress: Optional[str] = None
     function: Optional[str] = None
     phone: Optional[str] = None
     mobile: Optional[str] = None
