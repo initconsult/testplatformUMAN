@@ -11,6 +11,7 @@ from routers.question_lists import router as question_lists_router
 from routers.questions import router as questions_router
 from routers.reports import router as reports_router
 from routers.pcama import router as pcama_router
+from routers.auth import router as auth_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,6 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(advisors_router, prefix="/api/advisors", tags=["Advisors"])
 app.include_router(clients_router, prefix="/api/clients", tags=["Clients"])
 app.include_router(tests_router, prefix="/api/tests", tags=["Tests"])

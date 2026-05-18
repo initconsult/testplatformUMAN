@@ -15,11 +15,26 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
-    if (username === "admin" && password === "admin") {
-      localStorage.setItem("isAdmin", "true");
-      router.push("/admin");
-    } else {
-      setError("Ongeldige gebruikersnaam of wachtwoord");
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("token_type", data.token_type);
+        router.push("/admin");
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
+      }
+    } catch (error) {
+      setError("Er is een fout opgetreden bij het inloggen");
     }
     setLoading(false);
   };
