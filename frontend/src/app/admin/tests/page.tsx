@@ -166,7 +166,7 @@ export default function TestsPage() {
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        searchKeys={["nameNL", "nameFR", "nameEN"]}
+        searchKeys={["nameNL", "nameFR", "nameEN", "nameDE"]}
       />
 
       <Modal
@@ -176,7 +176,7 @@ export default function TestsPage() {
         size="lg"
       >
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Naam NL *
@@ -216,9 +216,22 @@ export default function TestsPage() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Naam DE
+              </label>
+              <input
+                type="text"
+                value={formData.nameDE}
+                onChange={(e) =>
+                  setFormData({ ...formData, nameDE: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Rapporttitel NL *
@@ -258,6 +271,19 @@ export default function TestsPage() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Rapporttitel DE
+              </label>
+              <input
+                type="text"
+                value={formData.reporttitleDE}
+                onChange={(e) =>
+                  setFormData({ ...formData, reporttitleDE: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
+              />
+            </div>
           </div>
 
           <div>
@@ -272,6 +298,48 @@ export default function TestsPage() {
               rows={3}
               className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
             />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Beschrijving FR
+              </label>
+              <textarea
+                value={formData.descriptionFR}
+                onChange={(e) =>
+                  setFormData({ ...formData, descriptionFR: e.target.value })
+                }
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Beschrijving EN
+              </label>
+              <textarea
+                value={formData.descriptionEN}
+                onChange={(e) =>
+                  setFormData({ ...formData, descriptionEN: e.target.value })
+                }
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Beschrijving DE
+              </label>
+              <textarea
+                value={formData.descriptionDE}
+                onChange={(e) =>
+                  setFormData({ ...formData, descriptionDE: e.target.value })
+                }
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-sm"
+              />
+            </div>
           </div>
 
           <div>

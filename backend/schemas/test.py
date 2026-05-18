@@ -22,10 +22,23 @@ class TestBase(BaseModel):
 class TestCreate(TestBase):
     pass
 
-class TestUpdate(TestBase):
+class TestUpdate(BaseModel):
     nameNL: Optional[str] = None
+    nameFR: Optional[str] = None
+    nameEN: Optional[str] = None
+    nameDE: Optional[str] = None
     reporttitleNL: Optional[str] = None
+    reporttitleFR: Optional[str] = None
+    reporttitleEN: Optional[str] = None
+    reporttitleDE: Optional[str] = None
     descriptionNL: Optional[str] = None
+    descriptionFR: Optional[str] = None
+    descriptionEN: Optional[str] = None
+    descriptionDE: Optional[str] = None
+    enabledNL: Optional[bool] = None
+    enabledFR: Optional[bool] = None
+    enabledEN: Optional[bool] = None
+    enabledDE: Optional[bool] = None
 
 class TestResponse(TestBase):
     id: int
