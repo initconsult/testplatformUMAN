@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 
 class ClientTestResult(Base):
@@ -12,8 +13,8 @@ class ClientTestResult(Base):
     weight = Column(Integer, nullable=False)
     result = Column(Integer)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     client_test = relationship("ClientTest", back_populates="client_test_results")
     question = relationship("Question", back_populates="client_test_results")

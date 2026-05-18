@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 import enum
 
@@ -32,8 +33,8 @@ class Client(Base):
     gender = Column(Enum(GenderEnum))
     language = Column(Enum(LanguageEnum), default=LanguageEnum.NL)
     advisors_id = Column(Integer, ForeignKey("advisors.id"), nullable=False)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     advisor = relationship("Advisor", back_populates="clients")
     client_tests = relationship("ClientTest", back_populates="client")

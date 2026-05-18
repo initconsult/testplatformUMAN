@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 
 class ClientTest(Base):
@@ -10,8 +11,8 @@ class ClientTest(Base):
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
     complete = Column(Boolean, default=False)
     safeurl = Column(String(36), nullable=False, unique=True)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     client = relationship("Client", back_populates="client_tests")
     test = relationship("Test", back_populates="client_tests")

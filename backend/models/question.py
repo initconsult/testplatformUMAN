@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 
 class Question(Base):
@@ -25,6 +26,8 @@ class Question(Base):
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     question_list_id = Column(Integer, ForeignKey("question_lists.id"), nullable=False)
     weight = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     category = relationship("Category", back_populates="questions")
     question_list = relationship("QuestionList", back_populates="questions")

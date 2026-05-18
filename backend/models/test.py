@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database import Base
 
 class Test(Base):
@@ -22,8 +23,8 @@ class Test(Base):
     enabledFR = Column(Boolean)
     enabledEN = Column(Boolean)
     enabledDE = Column(Boolean)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     client_tests = relationship("ClientTest", back_populates="test")
     test_question_lists = relationship("TestQuestionList", back_populates="test")
