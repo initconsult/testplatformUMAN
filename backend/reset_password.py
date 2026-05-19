@@ -18,14 +18,14 @@ if not DATABASE_URL:
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Password context - gebruik argon2 als fallback voor bcrypt problemen
+# Password context - gebruik dezelfde configuratie als models/user.py
 try:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     # Test bcrypt
     test_hash = pwd_context.hash("test")
-    print("Bcrypt werkt correct.")
+    print("Bcrypt werkt correct in reset script.")
 except Exception as e:
-    print(f"Bcrypt probleem: {e}")
+    print(f"Bcrypt probleem in reset script: {e}")
     print("Gebruik argon2 als alternatief...")
     pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -107,14 +107,35 @@ def reset_user_password():
         print("Wachtwoord wordt gehashed...")
         new_hash = get_password_hash(new_password)
         print(f"Hash gegenereerd: {new_hash[:20]}...")
+        
+        # Test de hash voordat we opslaan
+        print("Testen van hash verificatie...")
+        test_verify = pwd_context.verify(new_password, new_hash)
+        print(f"Hash verificatie test: {'GESLAAGD' if test_verify else 'GEFAALD'}")
+        
+        if not test_verify:
+            print("WAARSCHUWING: Hash verificatie gefaald! Er kan een probleem zijn.")
+        
         db.execute(
             text("UPDATE users SET password = :hash WHERE id = :user_id"),
             {"hash": new_hash, "user_id": user[0]}
         )
         db.commit()
         
+        # Controleer of de hash correct is opgeslagen
+        result = db.execute(text("SELECT password FROM users WHERE id = :user_id"), {"user_id": user[0]})
+        stored_hash = result.fetchone()[0]
+        print(f"Opgeslagen hash: {stored_hash[:20]}...")
+        
+        # Test de opgeslagen hash
+        final_verify = pwd_context.verify(new_password, stored_hash)
+        print(f"Finale verificatie test: {'GESLAAGD' if final_verify else 'GEFAALD'}")
+        
         print(f"\nWachtwoord voor gebruiker '{user[1]}' ({user[2]}) is succesvol bijgewerkt!")
-        print("Je kunt nu inloggen met het nieuwe wachtwoord.")
+        if final_verify:
+            print("✓ Je kunt nu inloggen met het nieuwe wachtwoord.")
+        else:
+            print("⚠ Er kan een probleem zijn met de hash. Probeer opnieuw.")
         
     except Exception as e:
         print(f"Fout bij het resetten van het wachtwoord: {e}")

@@ -3,13 +3,15 @@ from sqlalchemy.sql import func
 from database import Base
 from passlib.context import CryptContext
 
-# Password context met fallback voor bcrypt problemen
+# Password context - gebruik dezelfde configuratie als reset script
 try:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    # Test bcrypt
+    # Test bcrypt met een eenvoudig wachtwoord
     test_hash = pwd_context.hash("test")
-except Exception:
-    # Fallback naar argon2 als bcrypt niet werkt
+    print("Bcrypt werkt correct in models/user.py")
+except Exception as e:
+    print(f"Bcrypt probleem in models/user.py: {e}")
+    print("Gebruik argon2 als alternatief...")
     pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class User(Base):
