@@ -3,55 +3,35 @@
 Script om het wachtwoord van een gebruiker te resetten door een nieuwe hash aan te maken.
 """
 
-import sys
 import os
 import getpass
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from sqlalchemy.sql import func
 
-# Voeg de backend directory toe aan het pad
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Database configuratie (direct zonder andere models te importeren)
+# Database configuratie (volledig geïsoleerd)
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    print("DATABASE_URL environment variable is niet ingesteld!")
+    exit(1)
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 # Password context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# User model (standalone om import problemen te vermijden)
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255), unique=True, nullable=False, index=True)
-    email = Column(String(255), unique=True, nullable=False, index=True)
-    hashed_password = Column(String(255), nullable=False)
-    is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-    def verify_password(self, password: str) -> bool:
-        return pwd_context.verify(password, self.hashed_password)
-
-    @staticmethod
-    def get_password_hash(password: str) -> str:
-        return pwd_context.hash(password)
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
 
 def reset_user_password():
-    db: Session = SessionLocal()
+    db = SessionLocal()
     
     try:
-        # Toon alle gebruikers
-        users = db.query(User).all()
+        # Toon alle gebruikers met raw SQL
+        result = db.execute(text("SELECT id, username, is_admin FROM users"))
+        users = result.fetchall()
+        
         if not users:
             print("Geen gebruikers gevonden in de database.")
             return
@@ -65,12 +45,14 @@ def reset_user_password():
         # Vraag welke gebruiker
         user_input = input("\nVoer gebruikersnaam of ID in: ").strip()
         
-        # Zoek gebruiker op ID of username
+        # Zoek gebruiker op ID of username met raw SQL
         user = None
         if user_input.isdigit():
-            user = db.query(User).filter(User.id == int(user_input)).first()
+            result = db.execute(text("SELECT id, username FROM users WHERE id = :user_id"), {"user_id": int(user_input)})
+            user = result.fetchone()
         else:
-            user = db.query(User).filter(User.username == user_input).first()
+            result = db.execute(text("SELECT id, username FROM users WHERE username = :username"), {"username": user_input})
+            user = result.fetchone()
         
         if not user:
             print("Gebruiker niet gevonden!")
@@ -90,8 +72,12 @@ def reset_user_password():
             print("Wachtwoorden komen niet overeen!")
             return
         
-        # Update wachtwoord hash
-        user.hashed_password = User.get_password_hash(new_password)
+        # Update wachtwoord hash met raw SQL
+        new_hash = get_password_hash(new_password)
+        db.execute(
+            text("UPDATE users SET hashed_password = :hash WHERE id = :user_id"),
+            {"hash": new_hash, "user_id": user.id}
+        )
         db.commit()
         
         print(f"\nWachtwoord voor gebruiker '{user.username}' is succesvol bijgewerkt!")
