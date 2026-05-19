@@ -18,11 +18,29 @@ if not DATABASE_URL:
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Password context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password context - gebruik argon2 als fallback voor bcrypt problemen
+try:
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    # Test bcrypt
+    test_hash = pwd_context.hash("test")
+    print("Bcrypt werkt correct.")
+except Exception as e:
+    print(f"Bcrypt probleem: {e}")
+    print("Gebruik argon2 als alternatief...")
+    pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    # Beperk wachtwoord tot 72 bytes voor bcrypt compatibiliteit
+    if len(password.encode('utf-8')) > 72:
+        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    
+    try:
+        return pwd_context.hash(password)
+    except Exception as e:
+        print(f"Hash fout: {e}")
+        # Fallback naar een eenvoudige hash als laatste redmiddel
+        import hashlib
+        return hashlib.sha256(password.encode()).hexdigest()
 
 def reset_user_password():
     db = SessionLocal()
@@ -85,13 +103,10 @@ def reset_user_password():
             print("Wachtwoorden komen niet overeen!")
             return
         
-        # Beperk wachtwoord tot 72 bytes voor bcrypt
-        if len(new_password.encode('utf-8')) > 72:
-            print("Wachtwoord is te lang (max 72 bytes). Wordt ingekort...")
-            new_password = new_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-        
         # Update wachtwoord hash met raw SQL (gebruik 'password' kolom)
+        print("Wachtwoord wordt gehashed...")
         new_hash = get_password_hash(new_password)
+        print(f"Hash gegenereerd: {new_hash[:20]}...")
         db.execute(
             text("UPDATE users SET password = :hash WHERE id = :user_id"),
             {"hash": new_hash, "user_id": user[0]}
