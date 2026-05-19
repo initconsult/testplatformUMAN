@@ -12,7 +12,7 @@ security = HTTPBearer()
 
 @router.post("/login", response_model=Token)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == user_credentials.username).first()
+    user = db.query(User).filter(User.name == user_credentials.username).first()
     
     if not user or not user.verify_password(user_credentials.password):
         raise HTTPException(
@@ -37,7 +37,7 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
 def register(user: UserCreate, db: Session = Depends(get_db)):
     # Check if user already exists
     db_user = db.query(User).filter(
-        (User.username == user.username) | (User.email == user.email)
+        (User.name == user.username) | (User.email == user.email)
     ).first()
     if db_user:
         raise HTTPException(
@@ -48,9 +48,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     # Create new user
     hashed_password = User.get_password_hash(user.password)
     db_user = User(
-        username=user.username,
+        name=user.username,
         email=user.email,
-        hashed_password=hashed_password,
+        password=hashed_password,
         is_active=user.is_active,
         is_admin=user.is_admin
     )

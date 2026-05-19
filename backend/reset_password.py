@@ -85,6 +85,11 @@ def reset_user_password():
             print("Wachtwoorden komen niet overeen!")
             return
         
+        # Beperk wachtwoord tot 72 bytes voor bcrypt
+        if len(new_password.encode('utf-8')) > 72:
+            print("Wachtwoord is te lang (max 72 bytes). Wordt ingekort...")
+            new_password = new_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+        
         # Update wachtwoord hash met raw SQL (gebruik 'password' kolom)
         new_hash = get_password_hash(new_password)
         db.execute(

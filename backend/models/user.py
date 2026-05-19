@@ -9,16 +9,28 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(255), unique=True, nullable=False, index=True)
+    name = Column(String(255), unique=True, nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    hashed_password = Column(String(255), nullable=False)
-    is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
+    password = Column(String(255), nullable=False)
+    remember_token = Column(String(100), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    def verify_password(self, password: str) -> bool:
-        return pwd_context.verify(password, self.hashed_password)
+    # Voeg is_active en is_admin als properties toe (alle gebruikers zijn admin)
+    @property
+    def is_active(self):
+        return True
+    
+    @property
+    def is_admin(self):
+        return True
+    
+    @property
+    def username(self):
+        return self.name
+
+    def verify_password(self, password_to_check: str) -> bool:
+        return pwd_context.verify(password_to_check, self.password)
 
     @staticmethod
     def get_password_hash(password: str) -> str:
