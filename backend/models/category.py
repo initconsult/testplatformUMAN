@@ -15,9 +15,10 @@ class Category(Base):
     descriptionFR = Column(String(255), nullable=True)
     descriptionEN = Column(String(255), nullable=True)
     descriptionDE = Column(String(255), nullable=True)
-    question_list_id = Column(Integer, nullable=False)
+    question_list_id = Column(Integer, ForeignKey("question_lists.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
+    question_list = relationship("QuestionList", back_populates="categories")
     questions = relationship("Question", back_populates="category")
     client_test_results = relationship("ClientTestResult", back_populates="category")
