@@ -49,14 +49,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
-      fetchUser(token);
+      fetchUser(token).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = async (token: string) => {
+    setLoading(true);
     localStorage.setItem("access_token", token);
     await fetchUser(token);
+    setLoading(false);
   };
 
   const logout = () => {
