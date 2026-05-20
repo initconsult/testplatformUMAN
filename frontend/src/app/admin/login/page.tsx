@@ -12,14 +12,6 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    console.log("LoginPage: Auth state changed", { user, authLoading });
-    if (!authLoading && user) {
-      console.log("LoginPage: User is logged in, redirecting to dashboard...");
-      window.location.href = "/admin/dashboard";
-    }
-  }, [user, authLoading, router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -39,7 +31,7 @@ export default function AdminLogin() {
         console.log("LoginPage: Login successful, token received");
         await login(data.access_token);
         console.log("LoginPage: AuthContext login complete, manual redirecting...");
-        window.location.href = "/admin/dashboard";
+        router.push("/admin/dashboard");
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
