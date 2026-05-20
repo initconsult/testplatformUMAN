@@ -3,16 +3,8 @@ from sqlalchemy.sql import func
 from database import Base
 from passlib.context import CryptContext
 
-# Password context - gebruik dezelfde configuratie als reset script
-try:
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    # Test bcrypt met een eenvoudig wachtwoord
-    test_hash = pwd_context.hash("test")
-    print("Bcrypt werkt correct in models/user.py")
-except Exception as e:
-    print(f"Bcrypt probleem in models/user.py: {e}")
-    print("Gebruik argon2 als alternatief...")
-    pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+# Password context - gebruik argon2 voor stabiliteit
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class User(Base):
     __tablename__ = "users"
@@ -43,13 +35,4 @@ class User(Base):
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        # Beperk wachtwoord tot 72 bytes voor bcrypt compatibiliteit
-        if len(password.encode('utf-8')) > 72:
-            password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-        
-        try:
-            return pwd_context.hash(password)
-        except Exception:
-            # Fallback naar SHA256 als laatste redmiddel
-            import hashlib
-            return hashlib.sha256(password.encode()).hexdigest()
+        return pwd_context.hash(password)
