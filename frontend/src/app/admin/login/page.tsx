@@ -13,7 +13,9 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("LoginPage: Auth state changed", { user, authLoading });
     if (!authLoading && user) {
+      console.log("LoginPage: User is logged in, redirecting to dashboard...");
       router.push("/admin/dashboard");
     }
   }, [user, authLoading, router]);
@@ -34,7 +36,9 @@ export default function AdminLogin() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("LoginPage: Login successful, token received");
         await login(data.access_token);
+        console.log("LoginPage: AuthContext login complete, manual redirecting...");
         router.push("/admin/dashboard");
       } else {
         const errorData = await response.json();

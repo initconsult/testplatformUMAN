@@ -25,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const fetchUser = async (token: string) => {
+    console.log("AuthContext: Fetching user with token...");
     try {
       const response = await fetch("https://testplatform-uman-acc.initconsult.be/api/auth/me", {
         headers: {
@@ -34,8 +35,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.ok) {
         const userData = await response.json();
+        console.log("AuthContext: User data received:", userData);
         setUser(userData);
       } else {
+        console.warn("AuthContext: Fetch user failed with status:", response.status);
         localStorage.removeItem("access_token");
         localStorage.removeItem("token_type");
       }
