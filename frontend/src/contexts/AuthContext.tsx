@@ -33,19 +33,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
 
+      console.log("AuthContext: /me endpoint response status:", response.status);
+
       if (response.ok) {
         const userData = await response.json();
         console.log("AuthContext: User data received:", userData);
         setUser(userData);
+        return userData;
       } else {
         console.warn("AuthContext: Fetch user failed with status:", response.status);
         localStorage.removeItem("access_token");
         localStorage.removeItem("token_type");
+        setUser(null);
+        return null;
       }
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error("AuthContext: Error fetching user:", error);
       localStorage.removeItem("access_token");
       localStorage.removeItem("token_type");
+      setUser(null);
+      return null;
     }
   };
 
@@ -61,10 +68,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (token: string) => {
+    console.log("AuthContext: Starting login process...");
     setLoading(true);
     localStorage.setItem("access_token", token);
+    localStorage.setItem("token_type", "bearer");
     await fetchUser(token);
     setLoading(false);
+    console.log("AuthContext: Login process complete, user state updated");
   };
 
   const logout = () => {

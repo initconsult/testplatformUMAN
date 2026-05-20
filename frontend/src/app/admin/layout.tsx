@@ -28,16 +28,26 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    if (loading) return;
+    console.log("AdminLayout: useEffect triggered", { 
+      loading, 
+      hasUser: !!user, 
+      pathname,
+      userId: user?.id 
+    });
 
-    console.log("AdminLayout: State check", { hasUser: !!user, pathname });
-    
+    if (loading) {
+      console.log("AdminLayout: Still loading, skipping redirect logic");
+      return;
+    }
+
     if (!user && pathname !== "/admin/login") {
-      console.log("AdminLayout: No user found, redirecting to login");
+      console.log("AdminLayout: No user found, redirecting to login from:", pathname);
       router.replace("/admin/login");
     } else if (user && pathname === "/admin/login") {
       console.log("AdminLayout: User already logged in, redirecting to dashboard");
       router.replace("/admin/dashboard");
+    } else if (user) {
+      console.log("AdminLayout: User authenticated, staying on:", pathname);
     }
   }, [loading, user, pathname, router]);
 

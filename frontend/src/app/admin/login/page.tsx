@@ -17,6 +17,8 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
+    console.log("LoginPage: Starting login attempt...");
+
     try {
       const response = await fetch("https://testplatform-uman-acc.initconsult.be/api/auth/login", {
         method: "POST",
@@ -26,20 +28,28 @@ export default function AdminLogin() {
         body: JSON.stringify({ username, password }),
       });
 
+      console.log("LoginPage: Login response status:", response.status);
+
       if (response.ok) {
         const data = await response.json();
         console.log("LoginPage: Login successful, token received");
+        
+        // Wacht tot login volledig is afgerond
         await login(data.access_token);
-        console.log("LoginPage: AuthContext login complete, manual redirecting...");
-        router.push("/admin/dashboard");
+        
+        console.log("LoginPage: AuthContext login complete, redirecting to dashboard...");
+        router.replace("/admin/dashboard");
       } else {
         const errorData = await response.json();
+        console.error("LoginPage: Login failed:", errorData);
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
       }
     } catch (error) {
+      console.error("LoginPage: Login error:", error);
       setError("Er is een fout opgetreden bij het inloggen");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
