@@ -24,36 +24,41 @@ export default function AdminDashboard() {
   }, []);
 
   const fetchDashboardStats = async () => {
+    console.log("Dashboard: Fetching stats...");
     try {
       const token = localStorage.getItem("access_token");
+      if (!token) {
+        console.warn("Dashboard: No token found in localStorage");
+        return;
+      }
+      
+      const headers = { Authorization: `Bearer ${token}` };
       
       // Fetch stats from different endpoints
       const [clientsRes, testsRes, advisorsRes] = await Promise.all([
-        fetch("https://testplatform-uman-acc.initconsult.be/api/clients", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("https://testplatform-uman-acc.initconsult.be/api/tests", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("https://testplatform-uman-acc.initconsult.be/api/advisors", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        fetch("https://testplatform-uman-acc.initconsult.be/api/clients", { headers }),
+        fetch("https://testplatform-uman-acc.initconsult.be/api/tests", { headers }),
+        fetch("https://testplatform-uman-acc.initconsult.be/api/advisors", { headers }),
       ]);
 
-      const [clients, tests, advisors] = await Promise.all([
-        clientsRes.json(),
-        testsRes.json(),
-        advisorsRes.json(),
-      ]);
+      console.log("Dashboard: Responses received", {
+        clients: clientsRes.status,
+        tests: testsRes.status,
+        advisors: advisorsRes.status
+      });
+
+      const clients = clientsRes.ok ? await clientsRes.json() : [];
+      const tests = testsRes.ok ? await testsRes.json() : [];
+      const advisors = advisorsRes.ok ? await advisorsRes.json() : [];
 
       setStats({
-        totalUsers: 1, // Placeholder since we don't have a users endpoint
-        totalClients: clients.length || 0,
-        totalTests: tests.length || 0,
-        totalAdvisors: advisors.length || 0,
+        totalUsers: 1,
+        totalClients: Array.isArray(clients) ? clients.length : 0,
+        totalTests: Array.isArray(tests) ? tests.length : 0,
+        totalAdvisors: Array.isArray(advisors) ? advisors.length : 0,
       });
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
+      console.error("Dashboard: Error fetching stats:", error);
     } finally {
       setLoading(false);
     }
