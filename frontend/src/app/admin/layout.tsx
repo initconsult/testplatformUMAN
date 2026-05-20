@@ -29,9 +29,14 @@ export default function AdminLayout({
 
   useEffect(() => {
     console.log("AdminLayout: State check", { loading, hasUser: !!user, pathname });
-    if (!loading && !user && pathname !== "/admin/login") {
-      console.log("AdminLayout: No user found, redirecting to login");
-      router.push("/admin/login");
+    if (!loading) {
+      if (!user && pathname !== "/admin/login") {
+        console.log("AdminLayout: No user found, redirecting to login");
+        router.push("/admin/login");
+      } else if (user && pathname === "/admin/login") {
+        console.log("AdminLayout: User already logged in, redirecting to dashboard");
+        router.push("/admin/dashboard");
+      }
     }
   }, [loading, user, pathname, router]);
 
