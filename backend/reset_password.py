@@ -18,29 +18,11 @@ if not DATABASE_URL:
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Password context - gebruik dezelfde configuratie als models/user.py
-try:
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    # Test bcrypt
-    test_hash = pwd_context.hash("test")
-    print("Bcrypt werkt correct in reset script.")
-except Exception as e:
-    print(f"Bcrypt probleem in reset script: {e}")
-    print("Gebruik argon2 als alternatief...")
-    pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+# Password context - gebruik argon2 voor consistentie met models/user.py
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def get_password_hash(password: str) -> str:
-    # Beperk wachtwoord tot 72 bytes voor bcrypt compatibiliteit
-    if len(password.encode('utf-8')) > 72:
-        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    
-    try:
-        return pwd_context.hash(password)
-    except Exception as e:
-        print(f"Hash fout: {e}")
-        # Fallback naar een eenvoudige hash als laatste redmiddel
-        import hashlib
-        return hashlib.sha256(password.encode()).hexdigest()
+    return pwd_context.hash(password)
 
 def reset_user_password():
     db = SessionLocal()
