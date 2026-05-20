@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
-  { title: "Dashboard", href: "/admin", icon: "📊" },
+  { title: "Dashboard", href: "/admin/dashboard", icon: "📊" },
   { title: "Klanten", href: "/admin/clients", icon: "👥" },
   { title: "Adviseurs", href: "/admin/advisors", icon: "👤" },
   { title: "Tests", href: "/admin/tests", icon: "📝" },
@@ -140,7 +140,7 @@ export default function AdminLayout({
               {menuItems.find(
                 (item) =>
                   pathname === item.href ||
-                  (item.href !== "/admin" && pathname.startsWith(item.href))
+                  (item.href !== "/admin/dashboard" && pathname.startsWith(item.href))
               )?.title || "Dashboard"}
             </h1>
             <div className="flex items-center space-x-3">
