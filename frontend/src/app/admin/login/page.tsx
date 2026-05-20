@@ -12,19 +12,6 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const setAuthCookie = (token: string) => {
-    const isSecure = window.location.protocol === "https:";
-    const cookieParts = [
-      `access_token=${token}`,
-      "Path=/",
-      "SameSite=Lax",
-    ];
-    if (isSecure) {
-      cookieParts.push("Secure");
-    }
-    document.cookie = cookieParts.join("; ");
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -35,6 +22,7 @@ export default function AdminLogin() {
     try {
       const response = await fetch("https://testplatform-uman-acc.initconsult.be/api/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -52,8 +40,6 @@ export default function AdminLogin() {
         
         console.log("LoginPage: AuthContext login complete");
         console.log("LoginPage: Token stored in localStorage:", localStorage.getItem("access_token") ? "yes" : "no");
-        setAuthCookie(data.access_token);
-        console.log("LoginPage: Token stored in cookie");
         console.log("LoginPage: Redirecting to dashboard with router");
         router.replace("/admin/dashboard");
       } else {

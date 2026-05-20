@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPBearer
 from sqlalchemy.orm import Session
 from datetime import timedelta
@@ -11,7 +11,12 @@ router = APIRouter()
 security = HTTPBearer()
 
 @router.post("/login", response_model=Token)
-def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+def login(
+    user_credentials: UserLogin,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+):
     print(f"Login attempt for username: {user_credentials.username}")
     # Zoek op zowel naam als email
     user = db.query(User).filter(
@@ -50,6 +55,16 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    secure_cookie = request.url.scheme == "https"
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=secure_cookie,
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/register", response_model=UserResponse)
@@ -82,5 +97,15 @@ def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
 @router.post("/logout")
-def logout():
+def logout(response: Response, request: Request):
+    secure_cookie = request.url.scheme == "https"
+    response.set_cookie(
+        key="access_token",
+        value="",
+        httponly=True,
+        samesite="lax",
+        secure=secure_cookie,
+        max_age=0,
+        path="/",
+    )
     return {"message": "Successfully logged out"}

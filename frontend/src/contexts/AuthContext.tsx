@@ -84,9 +84,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    void fetch("https://testplatform-uman-acc.initconsult.be/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).catch((error) => {
+      console.error("AuthContext: Logout error:", error);
+    });
+
     localStorage.removeItem("access_token");
     localStorage.removeItem("token_type");
-    document.cookie = "access_token=; Path=/; Max-Age=0; SameSite=Lax";
     setUser(null);
     router.push("/admin/login");
   };
