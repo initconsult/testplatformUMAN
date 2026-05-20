@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import DataTable from "@/components/admin/DataTable";
 import PageHeader from "@/components/admin/PageHeader";
 import Modal from "@/components/admin/Modal";
@@ -123,12 +124,15 @@ export default function AdvisorsPage() {
       key: "name",
       label: "Naam",
       render: (val: string, row: Advisor) => (
-        <div className="flex items-center space-x-3">
+        <Link
+          href={`/admin/advisors/${row.id}`}
+          className="flex items-center space-x-3 hover:text-blue-600"
+        >
           <div className="w-8 h-8 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-semibold text-sm">
             {val.charAt(0).toUpperCase()}
           </div>
           <span className="font-medium text-gray-800">{val}</span>
-        </div>
+        </Link>
       ),
     },
     { key: "emailaddress", label: "E-mailadres" },
