@@ -28,7 +28,9 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
+    console.log("AdminLayout: State check", { loading, hasUser: !!user, pathname });
     if (!loading && !user && pathname !== "/admin/login") {
+      console.log("AdminLayout: No user found, redirecting to login");
       router.push("/admin/login");
     }
   }, [loading, user, pathname, router]);
