@@ -16,7 +16,7 @@ export default function AdminLogin() {
     console.log("LoginPage: Auth state changed", { user, authLoading });
     if (!authLoading && user) {
       console.log("LoginPage: User is logged in, redirecting to dashboard...");
-      window.location.href = "/admin/dashboard";
+      router.replace("/admin/dashboard");
     }
   }, [user, authLoading, router]);
 
@@ -39,7 +39,7 @@ export default function AdminLogin() {
         console.log("LoginPage: Login successful, token received");
         await login(data.access_token);
         console.log("LoginPage: AuthContext login complete, manual redirecting...");
-        window.location.href = "/admin/dashboard";
+        router.replace("/admin/dashboard");
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
