@@ -12,9 +12,23 @@ security = HTTPBearer()
 
 @router.post("/login", response_model=Token)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+    print(f"Login attempt for username: {user_credentials.username}")
     user = db.query(User).filter(User.name == user_credentials.username).first()
     
-    if not user or not user.verify_password(user_credentials.password):
+    if not user:
+        print(f"User not found: {user_credentials.username}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    print(f"User found: {user.name}, stored password: '{user.password}', input password: '{user_credentials.password}'")
+    password_match = user.verify_password(user_credentials.password)
+    print(f"Password verification result: {password_match}")
+    
+    if not password_match:
+        print("Password verification failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -22,11 +36,13 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
         )
     
     if not user.is_active:
+        print("User is not active")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Inactive user"
         )
     
+    print("Login successful, creating token")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
