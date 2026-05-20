@@ -13,10 +13,13 @@ security = HTTPBearer()
 @router.post("/login", response_model=Token)
 def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     print(f"Login attempt for username: {user_credentials.username}")
-    user = db.query(User).filter(User.name == user_credentials.username).first()
+    # Zoek op zowel naam als email
+    user = db.query(User).filter(
+        (User.name == user_credentials.username) | (User.email == user_credentials.username)
+    ).first()
     
     if not user:
-        print(f"User not found: {user_credentials.username}")
+        print(f"User not found by name or email: {user_credentials.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
