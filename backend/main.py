@@ -19,7 +19,12 @@ app = FastAPI(title="U-Man Test Platform API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"],
+    allow_origins=[
+        "http://localhost:3001",
+        "http://localhost:3000", 
+        "https://testplatform-uman-acc.initconsult.be",
+        "http://testplatform-uman-acc.initconsult.be"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
