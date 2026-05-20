@@ -30,7 +30,7 @@ export default function AdminLogin() {
         localStorage.setItem("token_type", data.token_type);
         
         // Force redirect to admin dashboard
-        window.location.href = "/admin";
+        window.location.href = "/admin/dashboard";
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
