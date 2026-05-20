@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AdminLogin() {
   const router = useRouter();
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,11 +28,8 @@ export default function AdminLogin() {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("token_type", data.token_type);
-        
-        // Force redirect to admin dashboard
-        window.location.href = "/admin/dashboard";
+        await login(data.access_token);
+        router.push("/admin/dashboard");
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");

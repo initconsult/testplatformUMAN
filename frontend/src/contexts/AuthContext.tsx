@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = async (token: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      const response = await fetch("https://testplatform-uman-acc.initconsult.be/api/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
