@@ -25,15 +25,27 @@ export default function AdvisorsPage() {
   const [formData, setFormData] = useState(emptyAdvisor);
   const [saving, setSaving] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/advisors/`);
-      setAdvisors(await res.json());
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+
+      const res = await fetch(`${apiUrl}/advisors/`, {
+        headers,
+        credentials: "include",
+      });
+
+      const data = res.ok ? await res.json() : [];
+      setAdvisors(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
+      setAdvisors([]);
     } finally {
       setLoading(false);
     }
@@ -64,12 +76,18 @@ export default function AdvisorsPage() {
     setSaving(true);
     try {
       const url = selectedAdvisor
-        ? `${apiUrl}/api/advisors/${selectedAdvisor.id}`
-        : `${apiUrl}/api/advisors/`;
+        ? `${apiUrl}/advisors/${selectedAdvisor.id}`
+        : `${apiUrl}/advisors/`;
       const method = selectedAdvisor ? "PATCH" : "POST";
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
       await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers,
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       setModalOpen(false);
@@ -84,8 +102,14 @@ export default function AdvisorsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedAdvisor) return;
     try {
-      await fetch(`${apiUrl}/api/advisors/${selectedAdvisor.id}`, {
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+      await fetch(`${apiUrl}/advisors/${selectedAdvisor.id}`, {
         method: "DELETE",
+        headers,
+        credentials: "include",
       });
       setDeleteModalOpen(false);
       fetchData();

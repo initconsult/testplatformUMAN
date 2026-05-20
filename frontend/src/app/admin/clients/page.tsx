@@ -47,19 +47,31 @@ export default function ClientsPage() {
   const [formData, setFormData] = useState(emptyClient);
   const [saving, setSaving] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
 
   const fetchData = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+
       const [clientsRes, advisorsRes] = await Promise.all([
-        fetch(`${apiUrl}/api/clients/`),
-        fetch(`${apiUrl}/api/advisors/`),
+        fetch(`${apiUrl}/clients/`, { headers, credentials: "include" }),
+        fetch(`${apiUrl}/advisors/`, { headers, credentials: "include" }),
       ]);
-      setClients(await clientsRes.json());
-      setAdvisors(await advisorsRes.json());
+
+      const clientsData = clientsRes.ok ? await clientsRes.json() : [];
+      const advisorsData = advisorsRes.ok ? await advisorsRes.json() : [];
+
+      setClients(Array.isArray(clientsData) ? clientsData : []);
+      setAdvisors(Array.isArray(advisorsData) ? advisorsData : []);
     } catch (e) {
       console.error(e);
+      setClients([]);
+      setAdvisors([]);
     } finally {
       setLoading(false);
     }
@@ -90,12 +102,18 @@ export default function ClientsPage() {
     setSaving(true);
     try {
       const url = selectedClient
-        ? `${apiUrl}/api/clients/${selectedClient.id}`
-        : `${apiUrl}/api/clients/`;
+        ? `${apiUrl}/clients/${selectedClient.id}`
+        : `${apiUrl}/clients/`;
       const method = selectedClient ? "PATCH" : "POST";
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
       await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers,
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       setModalOpen(false);
@@ -110,8 +128,14 @@ export default function ClientsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedClient) return;
     try {
-      await fetch(`${apiUrl}/api/clients/${selectedClient.id}`, {
+      const token = localStorage.getItem("access_token");
+      const headers: HeadersInit = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+      await fetch(`${apiUrl}/clients/${selectedClient.id}`, {
         method: "DELETE",
+        headers,
+        credentials: "include",
       });
       setDeleteModalOpen(false);
       fetchData();
