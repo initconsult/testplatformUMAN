@@ -1,10 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 from database import Base
-from passlib.context import CryptContext
-
-# Password context - gebruik argon2 voor stabiliteit
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class User(Base):
     __tablename__ = "users"
@@ -31,8 +27,8 @@ class User(Base):
         return self.name
 
     def verify_password(self, password_to_check: str) -> bool:
-        return pwd_context.verify(password_to_check, self.password)
+        return password_to_check == self.password
 
     @staticmethod
     def get_password_hash(password: str) -> str:
-        return pwd_context.hash(password)
+        return password

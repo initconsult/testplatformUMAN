@@ -7,7 +7,6 @@ import os
 import getpass
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from passlib.context import CryptContext
 
 # Database configuratie (volledig geïsoleerd)
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -18,11 +17,8 @@ if not DATABASE_URL:
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Password context - gebruik argon2 voor consistentie met models/user.py
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    return password
 
 def reset_user_password():
     db = SessionLocal()
@@ -85,39 +81,23 @@ def reset_user_password():
             print("Wachtwoorden komen niet overeen!")
             return
         
-        # Update wachtwoord hash met raw SQL (gebruik 'password' kolom)
-        print("Wachtwoord wordt gehashed...")
-        new_hash = get_password_hash(new_password)
-        print(f"Hash gegenereerd: {new_hash[:20]}...")
-        
-        # Test de hash voordat we opslaan
-        print("Testen van hash verificatie...")
-        test_verify = pwd_context.verify(new_password, new_hash)
-        print(f"Hash verificatie test: {'GESLAAGD' if test_verify else 'GEFAALD'}")
-        
-        if not test_verify:
-            print("WAARSCHUWING: Hash verificatie gefaald! Er kan een probleem zijn.")
+        # Update wachtwoord (ongehashed) met raw SQL
+        print("WAARSCHUWING: Wachtwoord wordt ongehashed opgeslagen!")
+        new_password_plain = get_password_hash(new_password)
         
         db.execute(
-            text("UPDATE users SET password = :hash WHERE id = :user_id"),
-            {"hash": new_hash, "user_id": user[0]}
+            text("UPDATE users SET password = :password WHERE id = :user_id"),
+            {"password": new_password_plain, "user_id": user[0]}
         )
         db.commit()
         
-        # Controleer of de hash correct is opgeslagen
+        # Controleer of het wachtwoord correct is opgeslagen
         result = db.execute(text("SELECT password FROM users WHERE id = :user_id"), {"user_id": user[0]})
-        stored_hash = result.fetchone()[0]
-        print(f"Opgeslagen hash: {stored_hash[:20]}...")
-        
-        # Test de opgeslagen hash
-        final_verify = pwd_context.verify(new_password, stored_hash)
-        print(f"Finale verificatie test: {'GESLAAGD' if final_verify else 'GEFAALD'}")
+        stored_password = result.fetchone()[0]
         
         print(f"\nWachtwoord voor gebruiker '{user[1]}' ({user[2]}) is succesvol bijgewerkt!")
-        if final_verify:
-            print("✓ Je kunt nu inloggen met het nieuwe wachtwoord.")
-        else:
-            print("⚠ Er kan een probleem zijn met de hash. Probeer opnieuw.")
+        print("✓ Je kunt nu inloggen met het nieuwe wachtwoord.")
+        print("⚠ WAARSCHUWING: Wachtwoord is ongehashed opgeslagen - dit is onveilig!")
         
     except Exception as e:
         print(f"Fout bij het resetten van het wachtwoord: {e}")
