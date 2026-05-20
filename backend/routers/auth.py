@@ -46,11 +46,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         )
     
     # Create new user
-    hashed_password = User.get_password_hash(user.password)
     db_user = User(
         name=user.username,
         email=user.email,
-        password=hashed_password,
+        password=user.password,
         is_active=user.is_active,
         is_admin=user.is_admin
     )
