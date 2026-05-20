@@ -23,7 +23,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+          process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
 
         const [clientsRes, advisorsRes, testsRes, clientTestsRes] =
           await Promise.all([

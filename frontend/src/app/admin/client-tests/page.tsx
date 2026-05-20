@@ -36,7 +36,7 @@ export default function ClientTestsPage() {
   const [formData, setFormData] = useState({ test_id: 0, client_id: 0 });
   const [saving, setSaving] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
 
   const fetchData = async () => {
     setLoading(true);

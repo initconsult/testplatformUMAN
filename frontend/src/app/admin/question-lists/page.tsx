@@ -25,7 +25,7 @@ export default function QuestionListsPage() {
   const [formData, setFormData] = useState(emptyQuestionList);
   const [saving, setSaving] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
 
   const fetchData = async () => {
     setLoading(true);
