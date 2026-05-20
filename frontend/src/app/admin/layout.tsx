@@ -40,15 +40,20 @@ export default function AdminLayout({
       return;
     }
 
-    if (!user && pathname !== "/admin/login") {
-      console.log("AdminLayout: No user found, redirecting to login from:", pathname);
-      router.replace("/admin/login");
-    } else if (user && pathname === "/admin/login") {
-      console.log("AdminLayout: User already logged in, redirecting to dashboard");
-      router.replace("/admin/dashboard");
-    } else if (user) {
-      console.log("AdminLayout: User authenticated, staying on:", pathname);
-    }
+    // Wacht een tick om ervoor te zorgen dat de state volledig is bijgewerkt
+    const timeoutId = setTimeout(() => {
+      if (!user && pathname !== "/admin/login") {
+        console.log("AdminLayout: No user found, redirecting to login from:", pathname);
+        router.replace("/admin/login");
+      } else if (user && pathname === "/admin/login") {
+        console.log("AdminLayout: User already logged in, redirecting to dashboard");
+        router.replace("/admin/dashboard");
+      } else if (user) {
+        console.log("AdminLayout: User authenticated, staying on:", pathname);
+      }
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
   }, [loading, user, pathname, router]);
 
   if (loading) {

@@ -37,8 +37,8 @@ export default function AdminLogin() {
         // Wacht tot login volledig is afgerond
         await login(data.access_token);
         
-        console.log("LoginPage: AuthContext login complete, redirecting to dashboard...");
-        router.replace("/admin/dashboard");
+        console.log("LoginPage: AuthContext login complete");
+        // De redirect wordt nu afgehandeld door AdminLayout
       } else {
         const errorData = await response.json();
         console.error("LoginPage: Login failed:", errorData);

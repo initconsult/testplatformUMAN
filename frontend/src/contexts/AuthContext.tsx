@@ -72,9 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     localStorage.setItem("access_token", token);
     localStorage.setItem("token_type", "bearer");
-    await fetchUser(token);
+    const userData = await fetchUser(token);
+    console.log("AuthContext: Login process complete, user state updated", userData);
     setLoading(false);
-    console.log("AuthContext: Login process complete, user state updated");
   };
 
   const logout = () => {
