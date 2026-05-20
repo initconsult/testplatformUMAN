@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import DataTable from "@/components/admin/DataTable";
 import PageHeader from "@/components/admin/PageHeader";
 import Modal from "@/components/admin/Modal";
@@ -42,6 +44,31 @@ export default function CategoriesPage() {
   const [saving, setSaving] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
+
+  const searchParams = useSearchParams();
+  const questionListIdParam = searchParams.get("questionListId");
+  const questionListIdValue = questionListIdParam ? Number(questionListIdParam) : null;
+  const activeQuestionListId =
+    questionListIdValue !== null && !Number.isNaN(questionListIdValue)
+      ? questionListIdValue
+      : null;
+
+  const activeQuestionList = useMemo(
+    () =>
+      activeQuestionListId
+        ? questionLists.find((ql) => ql.id === activeQuestionListId) || null
+        : null,
+    [activeQuestionListId, questionLists]
+  );
+
+  const filteredCategories = useMemo(() => {
+    if (!activeQuestionListId) {
+      return categories;
+    }
+    return categories.filter(
+      (category) => category.question_list_id === activeQuestionListId
+    );
+  }, [categories, activeQuestionListId]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -115,7 +142,18 @@ export default function CategoriesPage() {
   };
 
   const columns = [
-    { key: "nameNL", label: "Naam (NL)" },
+    {
+      key: "nameNL",
+      label: "Naam (NL)",
+      render: (val: string, row: Category) => (
+        <Link
+          href={`/admin/questions?categoryId=${row.id}&questionListId=${row.question_list_id}`}
+          className="font-medium text-gray-800 hover:text-blue-600"
+        >
+          {val}
+        </Link>
+      ),
+    },
     { key: "nameFR", label: "Naam (FR)" },
     { key: "nameEN", label: "Naam (EN)" },
     { key: "nameDE", label: "Naam (DE)" },
@@ -141,9 +179,29 @@ export default function CategoriesPage() {
         action={{ label: "Nieuwe categorie", onClick: handleNew }}
       />
 
+      {activeQuestionList && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          <span>
+            Filter: vragenlijst <strong>{activeQuestionList.name}</strong>
+          </span>
+          <Link
+            href="/admin/categories"
+            className="text-blue-700 hover:text-blue-900 underline"
+          >
+            Toon alle categorieën
+          </Link>
+          <Link
+            href="/admin/question-lists"
+            className="text-blue-700 hover:text-blue-900 underline"
+          >
+            Terug naar vragenlijsten
+          </Link>
+        </div>
+      )}
+
       <DataTable
         columns={columns}
-        data={categories}
+        data={filteredCategories}
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}

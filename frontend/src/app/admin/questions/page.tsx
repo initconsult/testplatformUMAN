@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import DataTable from "@/components/admin/DataTable";
 import PageHeader from "@/components/admin/PageHeader";
 import Modal from "@/components/admin/Modal";
@@ -59,6 +61,49 @@ export default function QuestionsPage() {
   const [saving, setSaving] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://testplatform-uman-acc.initconsult.be/api";
+
+  const searchParams = useSearchParams();
+  const categoryIdParam = searchParams.get("categoryId");
+  const questionListIdParam = searchParams.get("questionListId");
+  const categoryIdValue = categoryIdParam ? Number(categoryIdParam) : null;
+  const questionListIdValue = questionListIdParam ? Number(questionListIdParam) : null;
+  const activeCategoryId =
+    categoryIdValue !== null && !Number.isNaN(categoryIdValue)
+      ? categoryIdValue
+      : null;
+  const activeQuestionListId =
+    questionListIdValue !== null && !Number.isNaN(questionListIdValue)
+      ? questionListIdValue
+      : null;
+
+  const activeCategory = useMemo(
+    () =>
+      activeCategoryId
+        ? categories.find((category) => category.id === activeCategoryId) || null
+        : null,
+    [activeCategoryId, categories]
+  );
+
+  const activeQuestionList = useMemo(
+    () =>
+      activeQuestionListId
+        ? questionLists.find((ql) => ql.id === activeQuestionListId) || null
+        : null,
+    [activeQuestionListId, questionLists]
+  );
+
+  const filteredQuestions = useMemo(() => {
+    let data = questions;
+    if (activeQuestionListId) {
+      data = data.filter(
+        (question) => question.question_list_id === activeQuestionListId
+      );
+    }
+    if (activeCategoryId) {
+      data = data.filter((question) => question.category_id === activeCategoryId);
+    }
+    return data;
+  }, [questions, activeQuestionListId, activeCategoryId]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -197,9 +242,43 @@ export default function QuestionsPage() {
         action={{ label: "Nieuwe vraag", onClick: handleNew }}
       />
 
+      {(activeCategory || activeQuestionList) && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          <span>
+            Filter:
+            {activeQuestionList && (
+              <span className="ml-1">
+                vragenlijst <strong>{activeQuestionList.name}</strong>
+              </span>
+            )}
+            {activeCategory && (
+              <span className="ml-1">
+                categorie <strong>{activeCategory.nameNL}</strong>
+              </span>
+            )}
+          </span>
+          <Link
+            href={
+              activeQuestionListId
+                ? `/admin/categories?questionListId=${activeQuestionListId}`
+                : "/admin/categories"
+            }
+            className="text-blue-700 hover:text-blue-900 underline"
+          >
+            Categorieën bekijken
+          </Link>
+          <Link
+            href="/admin/questions"
+            className="text-blue-700 hover:text-blue-900 underline"
+          >
+            Toon alle vragen
+          </Link>
+        </div>
+      )}
+
       <DataTable
         columns={columns}
-        data={questions}
+        data={filteredQuestions}
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}

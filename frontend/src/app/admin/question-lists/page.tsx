@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import DataTable from "@/components/admin/DataTable";
 import PageHeader from "@/components/admin/PageHeader";
 import Modal from "@/components/admin/Modal";
@@ -98,8 +99,13 @@ export default function QuestionListsPage() {
     {
       key: "name",
       label: "Naam",
-      render: (val: string) => (
-        <span className="font-medium text-gray-800">{val}</span>
+      render: (val: string, row: QuestionList) => (
+        <Link
+          href={`/admin/categories?questionListId=${row.id}`}
+          className="font-medium text-gray-800 hover:text-blue-600"
+        >
+          {val}
+        </Link>
       ),
     },
     {
