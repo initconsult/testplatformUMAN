@@ -47,8 +47,8 @@ export default function PCATablesPage() {
     setLoading(true);
     try {
       const [pcaRes, catRes] = await Promise.all([
-        fetch(`${apiUrl}/api/pca/${activeTable.toLowerCase()}/`),
-        fetch(`${apiUrl}/api/categories/`),
+        fetch(`${apiUrl}/pca/${activeTable.toLowerCase()}/`),
+        fetch(`${apiUrl}/categories/`),
       ]);
       setPcaItems(await pcaRes.json());
       setCategories(await catRes.json());
@@ -88,8 +88,8 @@ export default function PCATablesPage() {
     setSaving(true);
     try {
       const url = selectedItem
-        ? `${apiUrl}/api/pca/${activeTable.toLowerCase()}/${selectedItem.id}`
-        : `${apiUrl}/api/pca/${activeTable.toLowerCase()}/`;
+        ? `${apiUrl}/pca/${activeTable.toLowerCase()}/${selectedItem.id}`
+        : `${apiUrl}/pca/${activeTable.toLowerCase()}/`;
       
       await fetch(url, {
         method: selectedItem ? "PATCH" : "POST",
@@ -109,7 +109,7 @@ export default function PCATablesPage() {
   const handleConfirmDelete = async () => {
     if (!selectedItem) return;
     try {
-      await fetch(`${apiUrl}/api/pca/${activeTable.toLowerCase()}/${selectedItem.id}`, {
+      await fetch(`${apiUrl}/pca/${activeTable.toLowerCase()}/${selectedItem.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);

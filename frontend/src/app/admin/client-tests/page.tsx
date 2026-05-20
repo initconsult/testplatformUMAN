@@ -42,9 +42,9 @@ export default function ClientTestsPage() {
     setLoading(true);
     try {
       const [ctRes, cRes, tRes] = await Promise.all([
-        fetch(`${apiUrl}/api/client-tests/`),
-        fetch(`${apiUrl}/api/clients/`),
-        fetch(`${apiUrl}/api/tests/`),
+        fetch(`${apiUrl}/client-tests/`),
+        fetch(`${apiUrl}/clients/`),
+        fetch(`${apiUrl}/tests/`),
       ]);
       setClientTests(await ctRes.json());
       setClients(await cRes.json());
@@ -73,7 +73,7 @@ export default function ClientTestsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await fetch(`${apiUrl}/api/client-tests/`, {
+      await fetch(`${apiUrl}/client-tests/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -90,7 +90,7 @@ export default function ClientTestsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedClientTest) return;
     try {
-      await fetch(`${apiUrl}/api/client-tests/${selectedClientTest.id}`, {
+      await fetch(`${apiUrl}/client-tests/${selectedClientTest.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);
@@ -158,7 +158,7 @@ export default function ClientTestsPage() {
         return (
           <div className="flex space-x-1">
             <a
-              href={`${apiUrl}/api/reports/nl/${val}`}
+              href={`${apiUrl}/reports/nl/${val}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
@@ -166,7 +166,7 @@ export default function ClientTestsPage() {
               NL
             </a>
             <a
-              href={`${apiUrl}/api/reports/fr/${val}`}
+              href={`${apiUrl}/reports/fr/${val}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
@@ -174,7 +174,7 @@ export default function ClientTestsPage() {
               FR
             </a>
             <a
-              href={`${apiUrl}/api/reports/en/${val}`}
+              href={`${apiUrl}/reports/en/${val}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded"
@@ -182,7 +182,7 @@ export default function ClientTestsPage() {
               EN
             </a>
             <a
-              href={`${apiUrl}/api/reports/pca/nl/${val}`}
+              href={`${apiUrl}/reports/pca/nl/${val}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-purple-600 hover:text-purple-800 text-xs bg-purple-50 px-2 py-1 rounded"

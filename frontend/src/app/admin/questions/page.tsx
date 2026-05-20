@@ -64,9 +64,9 @@ export default function QuestionsPage() {
     setLoading(true);
     try {
       const [qRes, cRes, qlRes] = await Promise.all([
-        fetch(`${apiUrl}/api/questions/`),
-        fetch(`${apiUrl}/api/categories/`),
-        fetch(`${apiUrl}/api/question-lists/`),
+        fetch(`${apiUrl}/questions/`),
+        fetch(`${apiUrl}/categories/`),
+        fetch(`${apiUrl}/question-lists/`),
       ]);
       setQuestions(await qRes.json());
       setCategories(await cRes.json());
@@ -103,8 +103,8 @@ export default function QuestionsPage() {
     setSaving(true);
     try {
       const url = selectedQuestion
-        ? `${apiUrl}/api/questions/${selectedQuestion.id}`
-        : `${apiUrl}/api/questions/`;
+        ? `${apiUrl}/questions/${selectedQuestion.id}`
+        : `${apiUrl}/questions/`;
       const method = selectedQuestion ? "PATCH" : "POST";
       await fetch(url, {
         method,
@@ -123,7 +123,7 @@ export default function QuestionsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedQuestion) return;
     try {
-      await fetch(`${apiUrl}/api/questions/${selectedQuestion.id}`, {
+      await fetch(`${apiUrl}/questions/${selectedQuestion.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);

@@ -47,8 +47,8 @@ export default function CategoriesPage() {
     setLoading(true);
     try {
       const [catRes, qlRes] = await Promise.all([
-        fetch(`${apiUrl}/api/categories/`),
-        fetch(`${apiUrl}/api/question-lists/`),
+        fetch(`${apiUrl}/categories/`),
+        fetch(`${apiUrl}/question-lists/`),
       ]);
       setCategories(await catRes.json());
       setQuestionLists(await qlRes.json());
@@ -84,8 +84,8 @@ export default function CategoriesPage() {
     setSaving(true);
     try {
       const url = selectedCategory
-        ? `${apiUrl}/api/categories/${selectedCategory.id}`
-        : `${apiUrl}/api/categories/`;
+        ? `${apiUrl}/categories/${selectedCategory.id}`
+        : `${apiUrl}/categories/`;
       const method = selectedCategory ? "PATCH" : "POST";
       await fetch(url, {
         method,
@@ -104,7 +104,7 @@ export default function CategoriesPage() {
   const handleConfirmDelete = async () => {
     if (!selectedCategory) return;
     try {
-      await fetch(`${apiUrl}/api/categories/${selectedCategory.id}`, {
+      await fetch(`${apiUrl}/categories/${selectedCategory.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);

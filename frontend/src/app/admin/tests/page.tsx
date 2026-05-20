@@ -50,7 +50,7 @@ export default function TestsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/tests/`);
+      const res = await fetch(`${apiUrl}/tests/`);
       setTests(await res.json());
     } catch (e) {
       console.error(e);
@@ -84,8 +84,8 @@ export default function TestsPage() {
     setSaving(true);
     try {
       const url = selectedTest
-        ? `${apiUrl}/api/tests/${selectedTest.id}`
-        : `${apiUrl}/api/tests/`;
+        ? `${apiUrl}/tests/${selectedTest.id}`
+        : `${apiUrl}/tests/`;
       const method = selectedTest ? "PATCH" : "POST";
       await fetch(url, {
         method,
@@ -104,7 +104,7 @@ export default function TestsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedTest) return;
     try {
-      await fetch(`${apiUrl}/api/tests/${selectedTest.id}`, {
+      await fetch(`${apiUrl}/tests/${selectedTest.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);

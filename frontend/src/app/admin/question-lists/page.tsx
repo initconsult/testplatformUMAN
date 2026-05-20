@@ -30,7 +30,7 @@ export default function QuestionListsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/question-lists/`);
+      const res = await fetch(`${apiUrl}/question-lists/`);
       setQuestionLists(await res.json());
     } catch (e) {
       console.error(e);
@@ -64,8 +64,8 @@ export default function QuestionListsPage() {
     setSaving(true);
     try {
       const url = selectedQL
-        ? `${apiUrl}/api/question-lists/${selectedQL.id}`
-        : `${apiUrl}/api/question-lists/`;
+        ? `${apiUrl}/question-lists/${selectedQL.id}`
+        : `${apiUrl}/question-lists/`;
       const method = selectedQL ? "PATCH" : "POST";
       await fetch(url, {
         method,
@@ -84,7 +84,7 @@ export default function QuestionListsPage() {
   const handleConfirmDelete = async () => {
     if (!selectedQL) return;
     try {
-      await fetch(`${apiUrl}/api/question-lists/${selectedQL.id}`, {
+      await fetch(`${apiUrl}/question-lists/${selectedQL.id}`, {
         method: "DELETE",
       });
       setDeleteModalOpen(false);
