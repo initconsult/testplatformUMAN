@@ -27,12 +27,14 @@ export default function AdminDashboard() {
     console.log("Dashboard: Fetching stats...");
     try {
       const token = localStorage.getItem("access_token");
+      console.log("Dashboard: Token from localStorage:", token ? "exists" : "missing");
       if (!token) {
         console.warn("Dashboard: No token found in localStorage");
         return;
       }
       
       const headers = { Authorization: `Bearer ${token}` };
+      console.log("Dashboard: Making API calls with headers:", headers);
       
       // Fetch stats from different endpoints
       const [clientsRes, testsRes, advisorsRes] = await Promise.all([
@@ -46,6 +48,16 @@ export default function AdminDashboard() {
         tests: testsRes.status,
         advisors: advisorsRes.status
       });
+
+      if (!clientsRes.ok) {
+        console.error("Dashboard: Clients API failed:", await clientsRes.text());
+      }
+      if (!testsRes.ok) {
+        console.error("Dashboard: Tests API failed:", await testsRes.text());
+      }
+      if (!advisorsRes.ok) {
+        console.error("Dashboard: Advisors API failed:", await advisorsRes.text());
+      }
 
       const clients = clientsRes.ok ? await clientsRes.json() : [];
       const tests = testsRes.ok ? await testsRes.json() : [];

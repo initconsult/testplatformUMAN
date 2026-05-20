@@ -37,9 +37,14 @@ export default function AdminLogin() {
         // Wacht tot login volledig is afgerond
         await login(data.access_token);
         
-        console.log("LoginPage: AuthContext login complete, forcing redirect to dashboard");
-        // Forceer een redirect naar dashboard
-        window.location.href = "/admin/dashboard";
+        console.log("LoginPage: AuthContext login complete");
+        console.log("LoginPage: Token stored in localStorage:", localStorage.getItem("access_token") ? "yes" : "no");
+        console.log("LoginPage: Forcing redirect to dashboard");
+        
+        // Forceer een redirect naar dashboard met een kleine delay om state updates te laten voltooien
+        setTimeout(() => {
+          window.location.href = "/admin/dashboard";
+        }, 100);
       } else {
         const errorData = await response.json();
         console.error("LoginPage: Login failed:", errorData);

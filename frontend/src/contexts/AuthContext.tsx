@@ -58,11 +58,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initAuth = async () => {
+      console.log("AuthContext: Initializing auth on mount");
       const token = localStorage.getItem("access_token");
+      console.log("AuthContext: Token in localStorage:", token ? "exists" : "missing");
       if (token) {
+        console.log("AuthContext: Fetching user with stored token");
         await fetchUser(token);
+      } else {
+        console.log("AuthContext: No token found, skipping user fetch");
       }
       setLoading(false);
+      console.log("AuthContext: Initialization complete");
     };
     initAuth();
   }, []);
