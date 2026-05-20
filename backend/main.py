@@ -45,6 +45,10 @@ app.include_router(pcama_router, prefix="/api/pca", tags=["PCA Tables"])
 async def root():
     return {"message": "U-Man Test Platform API v2.0.0"}
 
+@app.get("/heartbeat")
+async def heartbeat():
+    return {"status": "ok", "message": "API is running"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
