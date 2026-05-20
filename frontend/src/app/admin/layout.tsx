@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   { title: "Dashboard", href: "/admin", icon: "📊" },
@@ -23,22 +24,16 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, logout, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const isAdmin = localStorage.getItem("isAdmin");
-    if (!isAdmin && pathname !== "/admin/login") {
+    if (!loading && !user && pathname !== "/admin/login") {
       router.push("/admin/login");
     }
-  }, [mounted, pathname, router]);
+  }, [loading, user, pathname, router]);
 
-  if (!mounted) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-400">Laden...</div>
@@ -51,8 +46,7 @@ export default function AdminLayout({
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("isAdmin");
-    router.push("/admin/login");
+    logout();
   };
 
   return (
