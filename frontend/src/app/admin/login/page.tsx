@@ -28,7 +28,9 @@ export default function AdminLogin() {
         const data = await response.json();
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("token_type", data.token_type);
-        router.push("/admin");
+        
+        // Force redirect to admin dashboard
+        window.location.href = "/admin";
       } else {
         const errorData = await response.json();
         setError(errorData.detail || "Ongeldige gebruikersnaam of wachtwoord");
