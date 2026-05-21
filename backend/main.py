@@ -12,6 +12,7 @@ from routers.questions import router as questions_router
 from routers.reports import router as reports_router
 from routers.pcama import router as pcama_router
 from routers.auth import router as auth_router
+from routers.client_test_results import router as client_test_results_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -40,6 +41,11 @@ app.include_router(question_lists_router, prefix="/api/question-lists", tags=["Q
 app.include_router(questions_router, prefix="/api/questions", tags=["Questions"])
 app.include_router(reports_router, prefix="/api/reports", tags=["Reports"])
 app.include_router(pcama_router, prefix="/api/pca", tags=["PCA Tables"])
+app.include_router(
+    client_test_results_router,
+    prefix="/api/client-test-results",
+    tags=["Client Test Results"],
+)
 
 @app.get("/")
 async def root():
