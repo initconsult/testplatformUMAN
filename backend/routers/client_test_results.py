@@ -107,6 +107,18 @@ def update_answer_by_safeurl(
     db.commit()
     db.refresh(ctr)
 
+    remaining = (
+        db.query(ClientTestResult)
+        .filter(
+            ClientTestResult.client_test_id == client_test.id,
+            ClientTestResult.answer.is_(None),
+        )
+        .count()
+    )
+    if remaining == 0 and not client_test.complete:
+        client_test.complete = True
+        db.commit()
+
     return {
         "client_test_result_id": ctr.id,
         "answer": ctr.answer,
